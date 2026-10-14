@@ -1,0 +1,43 @@
+def metodo_newton_modificado(f, df, x0, lambida=1e-5, tol=1e-6, max_iter=100):
+    """
+    Método de Newton modificado para prever f'(x) próximo de zero usando FL.
+    """
+    x = x0
+    # Inicializa FL com a derivada do ponto inicial (supondo |f'(x0)| >= lambida)
+    FL = df(x0) 
+    
+    for k in range(max_iter):
+        fx = f(x)
+        
+        # Critério de parada pelo valor da função
+        if abs(fx) < tol:
+            print(f"Convergiu na iteração {k} com x = {x}")
+            return x
+            
+        dfx = df(x)
+        
+        # Modificação estrita do enunciado:
+        # Se |f'(x)| >= lambida, atualiza FL com a nova derivada.
+        # Caso contrário, mantém o FL anterior (a última válida).
+        if abs(dfx) >= lambida:
+            FL = dfx
+            
+        # Próxima aproximação usando o FL definido
+        x_novo = x - fx / FL
+        
+        # Critério de parada pela diferença entre aproximações
+        if abs(x_novo - x) < tol:
+            print(f"Convergiu na iteração {k+1} com x = {x_novo}")
+            return x_novo
+            
+        x = x_novo
+        
+    print("Número máximo de iterações atingido.")
+    return x
+
+# Exemplo de uso: f(x) = x^3 - 9x + 3, cuja derivada é f'(x) = 3x^2 - 9
+f_exemplo = lambda x: x**3 - 9*x + 3
+df_exemplo = lambda x: 3*x**2 - 9
+
+# Testando o algoritmo com um ponto inicial
+solucao = metodo_newton_modificado(f_exemplo, df_exemplo, x0=2.0, lambida=1e-4)
