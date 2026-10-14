@@ -1,0 +1,29 @@
+#metodo de newton-raphson
+
+
+# Metodo do ponto fixo 
+import math
+def f(x):
+    return x**3-2*x+2
+#parametros
+def f_linha(x):
+        return(2**x)*math.log(2) - 3
+
+#parametros
+x0 = 0.5
+epsilon = 0.001
+num_iter = 1000
+k = 0
+
+
+# função phi
+def f_iter(x):
+    return x - (f(x)/f_linha(x))
+
+while abs(x0 - f_iter(x0)) > epsilon:
+    xk = f_iter(x0)
+    x0 = xk 
+    k+=1
+    print(f'x aproximado = {x0:.6f} -- iteração:{k}')
+    if (k>= num_iter):
+        break
