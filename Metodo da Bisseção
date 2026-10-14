@@ -1,0 +1,30 @@
+import numpy as np
+import matplotlib.pyplot as plt
+#metodo do bisseção
+#variaveis  
+a = 0
+b = 1
+epsilon = 0.0001
+it = 1
+
+abscissa = np.linspace(-5,5,10)
+
+#função
+def f(x):
+    return x**3 - 9*x + 3
+
+while abs(b-a) < epsilon:
+  #calculo do ponto médio 
+  x = (a+b)/2
+
+  #condicionais
+  if abs(f(x)) < epsilon:
+    print(f'interação: {it} f(x): {f(x)} a-b: {a-b} x: {x}')
+    break
+  elif f(x)*f(a) < 0:
+    b = x
+  else:
+    a = x
+
+  print(f'interação: {it} f(x): {f(x)} a-b: {a-b}  x: {x}')
+  it = it + 1 
