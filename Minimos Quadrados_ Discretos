@@ -1,0 +1,60 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+
+#from Cholesky_0104 import f_cholesky
+x = np.array ([0.5,0.75,1.0,1.5,2.0,2.5,3.0], dtype=float)
+y = np.array([-2,8.-0.6,1.0,3.2,4.8,6.0,7.0], dtype = float)
+
+def g1(x):
+    return 1
+def g2(x):
+    return math.log(x)
+def g3(x):
+    return x**2
+def g4(x):
+    return x**3
+g = [g1,g2, g3, g4]
+
+#Matriz A de zeros
+A = np.zeros((len(g), len(g)))
+
+
+
+# vetor b
+b = np.zeros(len(g))
+for i in range (len(g)):
+    soma = 0
+    for k in range(len(x)):
+        soma += y[k] * g[i](x[k])
+    b[i] = soma
+
+#resolver
+#coef = f_cholesky(A,b)
+coef = np.linalg.solve(A,b)
+
+for i in range (len(coef)):
+    print(f"a{i} = {coef[i]}")
+
+def f_aprox(x) :
+    soma = 0
+    for i in range(len(g)):
+        soma+= coef[i]*x**i
+        return soma
+
+    def F(x,y):
+        soma = 0
+        for i in range(len(x)):
+            soma += (y[i]-f_aprox(x[i]))**2
+        return soma
+    print (F(x,y))
+
+    x_plot = np.linspace(min(x), max(x), 100)
+    y_plot = f_aprox(x_plot)
+
+    plt.scatter(x,y, color='red', label='Dados')
+    plt.plot(x_plot, y_plot, label='Ajuste Quadratico' )
+    plt.legend()
+    plt.show()
+    
+    
