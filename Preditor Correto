@@ -1,0 +1,73 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from RungeKutta import runge4, runge2
+
+def f(x, y):
+    return -x/y
+def solEDO(x):
+    return np.sqrt(400 - x**2)
+
+#valores 
+x0 = 0
+y0 = 20
+h = 4
+v_num = 16
+runge = 4
+ep = 0.00001
+
+def preditor_corretor(f, x0, y0, h, v_num, epsilon, runge=4):
+
+    if runge == 2:
+        x, y = runge2(f, x0, y0, h, v_num)
+    elif runge == 4:
+        x, y = runge4(f, x0, y0, h, v_num)
+    else:
+        print("Escolha o método Runge Kutta de 2 ou 4 ordem")
+        return None, None
+
+    xs = x[:4]
+    ys = y[:4]
+    it = int((v_num - x[3]) / h)
+
+    for i in range(it):
+        x_nl = xs[-1] + h
+
+        # preditor (Adams-Bashforth)
+        y_nl = ys[-1] + (h/24)*(55*f(xs[-1], ys[-1]) - 59*f(xs[-2], ys[-2])
+                                      +37*f(xs[-3], ys[-3]) - 9*f(xs[-4], ys[-4]))
+
+        # corretor (Adams-Moulton)
+        precisao = epsilon
+        y_n1 = y_nl
+
+        while precisao >= epsilon:
+            y_new = ys[-1] + (h/24)*(9*f(x_nl, y_n1) + 19*f(xs[-1], ys[-1])
+                                         - 5*f(xs[-2], ys[-2]) + f(xs[-3], ys[-3]))
+            precisao = abs(y_n1 - y_new)/abs(y_new)
+            y_n1 = y_new
+
+        xs = np.append(xs, x_nl)
+        ys = np.append(ys, y_n1)
+        print(ys)
+
+    return xs, ys
+
+#executa o metodo
+x_num, y_num = preditor_corretor(f, x0, y0, h, v_num, ep, runge)
+
+print(f'PC com runge {runge}: {y_num[-1]}')
+
+#---- grafico -----
+x_exato = np.linspace(0, max(x_num),100)
+y_exato = solEDO(x_exato)
+
+plt.figure(figsize=(8,5))
+plt.plot(x_exato, y_exato, 'k-', label='função')
+plt.plot(x_num, y_num, 'ro--', label='Preditor-Corretor')
+plt.xlabel('x')
+plt.ylabel('y(x)')
+plt.title('Comparação: Solução numerica vs exata')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
